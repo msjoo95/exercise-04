@@ -1,0 +1,124 @@
+---
+title: "wordle"
+author: "Minsoo Joo"
+date: "2025-02-18"
+output: html_document
+---
+
+Let's make the Wordle game!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+# Step 1
+Create your own custom function called load_dictionary() that takes a single argument, “filename”, that can be used to read in either of the two data files your downloaded.
+```{r}
+load_dictionary <- function(filename) {
+  library(tidyverse)
+  words <- readLines(paste0("./data/", filename))
+  words <- words[-1]
+  return(words)
+}
+```
+Once you have created your function, use that function to create two variables, solution_list and valid_list, that, respectively contain vectors of possible solution words and valid words to guess. 
+```{r}
+valid_list <- load_dictionary("collins-scrabble-words-2019.txt")
+solution_list <- load_dictionary("google-10000-english-usa-no-swears.txt")
+
+str(valid_list)
+str(solution_list)
+```
+
+# Step 2
+Window your variable solution_list to only include words that are included in valid_list. There are multiple ways that you could do this, but the set operation function, intersection() is an easy way. Use R help to look at the documentation for the intersection() function to see if you can get that to work. How many words are in your updated solution_list vector?
+
+```{r}
+solution_list <- intersect(valid_list,solution_list)
+length(solution_list)
+```
+
+# Step 3
+Write a custom function called pick_solution() that [1] removes all words from solution_list that are not 5 letters in length, [2] then randomly chooses a single word from those that remain, and [3] then splits that word into a vector of single-character elements. You should be able to pass your solution_list vector as the argument to the function.
+```{r}
+pick_solution <- function(list_name, word_length=5){
+  filtered <- list_name[nchar(list_name) == word_length]
+  filtered <- filtered %>% 
+    sample(1, replace = FALSE) %>% 
+    strsplit(split = "") %>% 
+    unlist()
+  return(filtered)
+}
+```
+Once your function works, run it and assign the result to a variable called solution.
+```{r}
+solution <- pick_solution(solution_list)
+solution
+```
+
+# Step 4
+I firstly made "evaluate_guess()" function.
+```{r}
+evaluate_guess <- function(guess, solution){
+  result <-list()
+  for (i in 1:length(guess)) {
+    if (guess[i] == solution[i]){
+      result[i] <- '*'
+    }
+    else if ((guess[i] != solution[i]) & (guess[i] %in% solution)){
+      result[i] <- '+'
+    }
+    else if (!guess[i] %in% solution){
+      result[i] <- '-'
+    }
+  }
+  return(unlist(result))
+}
+```
+Then I made "play_wordle()" function.
+```{r}
+play_wordle <- function(solution, valid_list, num_guesses=6){
+  print("Welcom to the game!")
+  print(paste("You have", num_guesses, "chances to guess a word of length", length(solution)))
+  print("RULES")
+  print("* : in the word and in the correct position")
+  print("+ : in the word but in the wrong position")
+  print("- : not in the word")
+  i <- 1
+  letter_diff <- LETTERS
+  while (i <= num_guesses) {
+    guess <- readline(paste("Attempt", i, "- Enter your guess, then press <enter>: "))
+    guess <- toupper(guess)
+    guess <- unlist(strsplit(guess, split = ""))
+    if (length(guess) != length(solution)){
+      print(paste("Length of the word should be", length(solution), "- Try again!"))
+      next()
+    }
+    if (!paste(guess, collapse="") %in% valid_list){
+      print("It's not a valid word - Try again!")
+      next()
+    }
+    if (all(guess == solution)){
+      print(paste("Congratulations!! You got the answer!!"))
+      return()
+    }
+    
+    print(evaluate_guess(guess, solution))
+    
+    letter_diff <- setdiff(letter_diff, guess)
+    print(paste("Letters left:", paste(letter_diff, collapse = ", ")))
+    
+    i <- i+1
+  }
+  print(paste("Game over! The answer is:", paste(solution, collapse = "")))
+}
+```
+
+Let's play the game! (If you run play_wordle(), knitting does not work, so I have commented it out.)
+```{r}
+#play_wordle(solution, valid_list)
+```
