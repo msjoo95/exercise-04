@@ -117,8 +117,7 @@ play_wordle <- function(solution, valid_list, num_guesses=6){
   print(paste("Game over! The answer is:", paste(solution, collapse = "")))
 }
 ```
-
-Let's play the game! (I commented out play_wordle() since it interferes with knitting.)
-```{r}
-#play_wordle(solution, valid_list)
+Let's play the game!
+```{r, eval = FALSE}
+play_wordle(solution, valid_list)
 ```

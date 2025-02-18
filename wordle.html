@@ -425,7 +425,7 @@ function.</p>
 called solution.</p>
 <pre class="r"><code>solution &lt;- pick_solution(solution_list)
 solution</code></pre>
-<pre><code>## [1] &quot;T&quot; &quot;O&quot; &quot;X&quot; &quot;I&quot; &quot;C&quot;</code></pre>
+<pre><code>## [1] &quot;G&quot; &quot;R&quot; &quot;I&quot; &quot;L&quot; &quot;L&quot;</code></pre>
 </div>
 <div id="step-4" class="section level1">
 <h1>Step 4</h1>
@@ -481,9 +481,8 @@ solution</code></pre>
   }
   print(paste(&quot;Game over! The answer is:&quot;, paste(solution, collapse = &quot;&quot;)))
 }</code></pre>
-<p>Let’s play the game! (I commented out play_wordle() since it
-interferes with knitting.)</p>
-<pre class="r"><code>#play_wordle(solution, valid_list)</code></pre>
+<p>Let’s play the game!</p>
+<pre class="r"><code>play_wordle(solution, valid_list)</code></pre>
 </div>
 
 
